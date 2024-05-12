@@ -28,7 +28,7 @@ Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
         * [RepairControl](#RepairControl)
         * [ChargingHistory](#ChargingHistory)
         * [AppoinyState](#AppoinyState)
-        * [frointend](#frointend)
+        * [frontend](#frontend)
 * [环境搭建](#环境搭建)
 * [用法](#用法)
     * [输入格式规范](#输入格式规范)
