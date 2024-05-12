@@ -20,6 +20,7 @@ Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
         * [数据建模](#数据建模)
         * [状态转移图](#状态转移图)
     * [项目分工及实现细节](#项目分工及实现细节)
+        * [utils](#utils)
         * [User](#User)
         * [Admin](#Admin)
         * [Charger](#Charger)
@@ -30,6 +31,7 @@ Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
         * [frointend](#frointend)
 * [环境搭建](#环境搭建)
 * [用法](#用法)
+    * [输入格式规范](#输入格式规范)
     * [充电者](#充电者)
     * [管理员](#管理员)
     * [维修员](#维修员)
@@ -96,6 +98,19 @@ git checkout -b master
 - 测试：cyx,www,sjg,zzy,yk
 - 文档：cyx,www,sjg,zzy,yk
 
+#### utils
+[cyx,www,sjg,zzy,yk]  
+把可复用的工具函数放在这里，比如检查输入是否合法等
+```
+def check_ebike_id(ebike_id: str):
+    """
+    检查电动车编号是否为合法编号
+    :param
+        ebike_id: 电动车编号
+    :return:
+        True/False
+    """
+```
 
 #### User
 [cyx]  
@@ -168,6 +183,9 @@ pip install -r requirements.txt
 ## 用法
 
 方便测试方使用，暂定
+
+### 输入格式规范
+电动车编号格式:（G/X/F）+ 4位数字（0001-9999）（例如：G0001）
 
 ### 充电者
 
