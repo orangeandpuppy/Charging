@@ -25,14 +25,7 @@ Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
       - [状态转移图](#状态转移图)
   - [项目分工及实现细节](#项目分工及实现细节)
     - [backend/](#backend)
-      - [utils](#utils)
-      - [User](#user)
-      - [Admin](#admin)
-      - [Charger](#charger)
-      - [Engineer](#engineer)
-      - [RepairControl](#repaircontrol)
-      - [ChargingHistory](#charginghistory)
-      - [AppointState](#appointstate)
+      - [远程连接MySQL模拟服务器端](#远程连接mysql模拟服务器端)
     - [frontend/](#frontend)
   - [环境搭建](#环境搭建)
   - [用法](#用法)
@@ -105,66 +98,31 @@ git checkout -b master
 
 ### backend/
 
-#### utils
-[cyx,www,sjg,zzy,yk]  
-把可复用的工具函数放在这里，比如检查输入是否合法等
+#### 远程连接MySQL模拟服务器端
+1. 安装MySQL  
+2. 命令行模式配置MySQL  
+- 输入密码，进入MySQL
+```angular2html
+mysql -u root -p
 ```
-def check_ebike_id(ebike_id: str):
-    """
-    检查电动车编号是否为合法编号
-    :param
-        ebike_id: 电动车编号
-    :return:
-        True/False
-    """
+- 创建数据库charging_db,用于存储该项目数据
+```angular2html
+create database charging_db;
+use charging_db;
 ```
-
-#### User
-[cyx]  
-公有属性：无  
-公有方法：  
+- 创建一个用户remote_connect,密码为123456,用于远程操作该数据库，并赋予charging_db的所有权限
+```angular2html
+create user 'remote_connect'@'%' identified by '123456';
+grant all privileges on charging_db.* to 'remote_connect'@'%';
+flush privileges;
 ```
-def get_id(self):获取用户的id
-return: 用户的id(str)
-```
+3. 配置服务器端ip地址  
+由于个人电脑ip地址被NAT设备屏蔽后只能看到私有ip地址，该ip地址可能会变化，需要使用内网穿透工具，如贝瑞花生壳  
+将本地ip地址映射到公网上，使用该公网ip地址访问服务器端  
+配置流程略  
 
-```
-def get_password:获取用户的密码
-return: 用户的密码(str)
-```
-
-```
-def is_in_db(self):判断该用户是否在数据库中
-return: 该用户是否在数据库中(bool)
-```
-
-```
-def save_to_db(self):保存用户信息到数据库中,如果用户已经存在，则报错
-return: 无
-```
-
-#### Admin
-[sjg]
-
-
-#### Charger
-[cyx]
-
-
-#### Engineer
-[www]
-
-
-#### RepairControl
-[sjg]
-
-
-#### ChargingHistory
-[sjg]
-
-
-#### AppointState
-[cyx]
+4. 用pymysql连接远程数据库  
+安全起见不把remote_connect的密码放在README里了
 
 
 ### frontend/
@@ -197,7 +155,8 @@ npm=8.19.4
 方便测试方使用，暂定
 
 ### 输入格式规范
-电动车编号格式:（G/X/F）+ 4位数字（0001-9999）（例如：G0001）
+电动车编号格式: 充电站字母（G/X/F）+ 4位数字（0001-9999）(例如：G0001)  
+充电桩编号格式: 充电站字母/充电口颜色（R或B）-两位数字 (例如: F/R-01)
 
 ### 充电者
 

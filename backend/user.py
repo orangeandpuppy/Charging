@@ -3,17 +3,15 @@
 对外提供用户的基本信息，包括用户的id，密码信息，查询用户信息是否在数据库中，保存用户信息到数据库中
 """
 from config import config as cfg
-import duckdb
+from utils import connect_db
 
 
 class User:
-    def __init__(self, id: str, password: str, db_path=None):
+    def __init__(self, id: str, password: str):
         self.__id = id
+        if not self.__check_password(password):
+            raise Exception("密码不合法")
         self.__password = password
-        if db_path:
-            self.__db_path = db_path
-        else:
-            self.__db_path = cfg['user_db']
 
     def get_id(self):
         """
@@ -34,24 +32,38 @@ class User:
         查询用户信息是否在数据库中
         :return: True/False
         """
-        con = duckdb.connect(self.__db_path)
-        cur = con.cursor()
-        cur.execute(f"SELECT * FROM user WHERE id = '{self.__id}'")
-        result = cur.fetchdf()
-        con.close()
-        return not result.empty
+        with connect_db() as con:
+            cur = con.cursor()
+            cur.execute("SELECT * FROM user WHERE id = %s", (self.__id,))
+            data = cur.fetchone()
+        return data is not None
 
     def save_to_db(self):
         """
         保存用户信息到数据库中,如果用户已经存在，则报错
         :return: 无
         """
-        con = duckdb.connect(self.__db_path)
-        cur = con.cursor()
         if self.is_in_db():
             raise Exception(f"用户{self.__id}已经存在")
-        cur.execute(f"INSERT INTO user VALUES ('{self.__id}', '{self.__password}')")
-        con.close()
+        with connect_db() as con:
+            cur = con.cursor()
+            cur.execute("INSERT INTO user VALUES (%s, %s)", (self.__id, self.__password))
+            con.commit()
+
+    def __check_password(self, password):
+        """
+        检查密码是否合法
+        :param
+            password: 密码
+        :return: True/False
+        """
+        # 检查是否每个字符都在cfg['supported_password_char']中,且长度在[6, 20]之间
+        if len(password) < 6 or len(password) > 20:
+            return False
+        for c in password:
+            if c not in cfg['supported_password_char']:
+                return False
+        return True
 
 
 if __name__ == '__main__':

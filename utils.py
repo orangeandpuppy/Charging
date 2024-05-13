@@ -1,5 +1,21 @@
 from config import config as cfg
 from datetime import timedelta, datetime
+import pymysql as py
+
+
+def connect_db():
+    """
+    连接数据库
+    :return:
+        数据库连接对象
+    """
+    conn = py.connect(host=cfg['host'],
+                      user=cfg['user'],
+                      password=cfg['password'],
+                      port=cfg['port'],
+                      database=cfg['database'],
+                      charset=cfg['charset'])
+    return conn
 
 
 def check_ebike_id(ebike_id: str):
@@ -15,6 +31,28 @@ def check_ebike_id(ebike_id: str):
     if ebike_id[0] not in cfg['supported_charging_station']:
         return False
     if not ebike_id[1:].isdigit():
+        return False
+    return True
+
+
+def check_point_id(point_id: str):
+    """
+    检查充电桩编号是否为合法编号
+    :param
+        point_id: 充电桩编号
+    :return:
+        True/False
+    """
+    # 充电桩编号格式为: 充电站字母/充电口颜色（R或B）-两位数字 例如: F/R-01
+    if len(point_id) != 6:
+        return False
+    if point_id[0] not in cfg['supported_charging_station']:
+        return False
+    if point_id[2] != 'R' and point_id[2] != 'B':
+        return False
+    if point_id[1] != '/' or point_id[3] != '-':
+        return False
+    if not point_id[4:].isdigit():
         return False
     return True
 
@@ -65,8 +103,4 @@ def str_to_timedelta(time_str: str):
 
 
 if __name__ == "__main__":
-    a = "2021-01-01 00:01"
-    a = str_to_datetime(a)
-    b = "2021-01-01 00:30"
-    b = str_to_datetime(b)
-    print(check_charge_time(a, b))
+    print(check_point_id("F/R-01"))
