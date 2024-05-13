@@ -1,5 +1,6 @@
 ![Python 3.9](https://img.shields.io/badge/python-3.9-green.svg)
-![VUE 2.6.11](https://img.shields.io/badge/vue-2.6.11-green.svg)
+![React 18.3.2](https://img.shields.io/badge/react-18.3.2-green.svg)
+
 # Charging: Electric Vehicle Charging Station Software
 ## License
 Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
@@ -9,32 +10,36 @@ Copyright (C) 此项目为2021 HYSE04小组大作业——电动车珈电站
 ## 目录
 
 <!--ts-->
-* [Git多人协作](#Git多人协作)
-    * [准备工作](#准备工作)
-    * [拉取代码](#拉取代码)
-    * [提交代码](#提交代码)
-* [介绍](#介绍)
-    * [建模](#建模)
-        * [类图](#类图)
-        * [用例图](#用例图)
-        * [数据建模](#数据建模)
-        * [状态转移图](#状态转移图)
-    * [项目分工及实现细节](#项目分工及实现细节)
-        * [utils](#utils)
-        * [User](#User)
-        * [Admin](#Admin)
-        * [Charger](#Charger)
-        * [Engineer](#Engineer)
-        * [RepairControl](#RepairControl)
-        * [ChargingHistory](#ChargingHistory)
-        * [AppoinyState](#AppoinyState)
-        * [frontend](#frontend)
-* [环境搭建](#环境搭建)
-* [用法](#用法)
-    * [输入格式规范](#输入格式规范)
-    * [充电者](#充电者)
-    * [管理员](#管理员)
-    * [维修员](#维修员)
+- [Charging: Electric Vehicle Charging Station Software](#charging-electric-vehicle-charging-station-software)
+  - [License](#license)
+  - [目录](#目录)
+  - [Git多人协作](#git多人协作)
+    - [准备工作](#准备工作)
+    - [拉取代码](#拉取代码)
+    - [提交代码](#提交代码)
+  - [介绍](#介绍)
+    - [建模](#建模)
+      - [类图](#类图)
+      - [用例图](#用例图)
+      - [数据建模](#数据建模)
+      - [状态转移图](#状态转移图)
+  - [项目分工及实现细节](#项目分工及实现细节)
+    - [backend/](#backend)
+      - [utils](#utils)
+      - [User](#user)
+      - [Admin](#admin)
+      - [Charger](#charger)
+      - [Engineer](#engineer)
+      - [RepairControl](#repaircontrol)
+      - [ChargingHistory](#charginghistory)
+      - [AppointState](#appointstate)
+    - [frontend/](#frontend)
+  - [环境搭建](#环境搭建)
+  - [用法](#用法)
+    - [输入格式规范](#输入格式规范)
+    - [充电者](#充电者)
+    - [管理员](#管理员)
+    - [维修员](#维修员)
 <!--te-->
 
 
@@ -91,12 +96,14 @@ git checkout -b master
 #### 状态转移图
 ![状态转移图](figures/transitions.png)
 
-### 项目分工及实现细节
+## 项目分工及实现细节
 - 项目经理：cyx
 - 后端开发：cyx,www,sjg
 - 前端开发：zzy,yk
 - 测试：cyx,www,sjg,zzy,yk
 - 文档：cyx,www,sjg,zzy,yk
+
+### backend/
 
 #### utils
 [cyx,www,sjg,zzy,yk]  
@@ -160,9 +167,12 @@ return: 无
 [cyx]
 
 
-#### frontend
+### frontend/
 [yk,zzy]
-
+创建React项目
+'''
+npx create-react-app frontend
+'''
 
 ## 环境搭建
 
@@ -175,10 +185,11 @@ conda activate Charging
 ```
 pip install -r requirements.txt
 ```
-3. 安装Vue
 
-暂定，交给前端组
-
+3.前端需要安装node,npm等工具
+node=16.20.2
+npm=8.19.4
+其他配置见frontend\package.json文件
 
 ## 用法
 
