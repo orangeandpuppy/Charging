@@ -22,7 +22,7 @@ def check_ebike_id(ebike_id: str):
     """
     检查电动车编号是否为合法编号
     :param
-        ebike_id: 电动车编号
+        ebike_id: 电动车编号 (eg G1234)
     :return:
         True/False
     """
@@ -57,17 +57,15 @@ def check_point_id(point_id: str):
     return True
 
 
-def check_charge_time(start_time: str, end_time: str):
+def check_charge_time(start_time: datetime, end_time: datetime):
     """
     检查充电开始和结束时间是否合法
     :param
-        start_time: 充电开始时间
-        end_time: 充电结束时间
+        start_time: 充电开始时间 [datetime]
+        end_time: 充电结束时间 [datetime]
     :return:
         True/False
     """
-    start_time = str_to_datetime(start_time)
-    end_time = str_to_datetime(end_time)
     if start_time > end_time:
         return False
     if end_time - start_time > timedelta(hours=10):

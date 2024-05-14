@@ -16,20 +16,20 @@ class User:
     def get_id(self):
         """
         获取用户的id
-        :return: 用户的id
+        :return: 用户的id [str]
         """
         return self.__id
 
     def get_password(self):
         """
         获取用户的密码
-        :return: 用户的密码
+        :return: 用户的密码 [str]
         """
         return self.__password
 
     def is_in_db(self):
         """
-        查询用户信息是否在数据库中
+        查询用户信息是否在数据库中,即用户是否已经注册
         :return: True/False
         """
         with connect_db() as con:
@@ -40,7 +40,7 @@ class User:
 
     def save_to_db(self):
         """
-        保存用户信息到数据库中,如果用户已经存在，则报错
+        保存用户信息到数据库中，即注册,如果用户已经存在，则报错
         :return: 无
         """
         if self.is_in_db():
@@ -54,7 +54,7 @@ class User:
         """
         检查密码是否合法
         :param
-            password: 密码
+            password: 密码 [str]
         :return: True/False
         """
         # 检查是否每个字符都在cfg['supported_password_char']中,且长度在[6, 20]之间
