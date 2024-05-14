@@ -1,6 +1,9 @@
 import time
 import os
 
+
+# =============================================== 后端配置 =================================================
+
 config = {
     # MySQL
     'host': '115.236.153.172',
@@ -24,3 +27,13 @@ config = {
 
 exp_id = time.strftime('%Y%m%d-%H%M%S', time.localtime())
 config['out_dir'] = os.path.join(config['RESULT_PATH'], exp_id)
+
+
+# =============================================== 前后端连接配置 =================================================
+
+# 应用运行地址
+FLASK_HOST = os.getenv('FLASK_HOST', '127.0.0.1')
+# 应用运行端口
+FLASK_PORT = os.getenv('FLASK_PORT', 8021)
+# 是否调试模式：是-True,否-False
+FLASK_DEBUG = True
