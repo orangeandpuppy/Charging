@@ -1,3 +1,5 @@
+import sys
+sys.path.append('e:/学校用/大三/软件工程/Charging')
 from utils import connect_db
 from user import User
 from appointstate import AppointState
