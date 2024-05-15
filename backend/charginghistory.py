@@ -5,6 +5,7 @@
 import duckdb
 from utils import connect_db
 
+
 class ChargingHistory:
     def get_charging_history_by_user(self, user_id):
         """
