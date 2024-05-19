@@ -31,7 +31,7 @@ span {
 }
 a {
     color: #333;
-    font-size: 1rem;
+    font-size: 0.7rem;
     text-decoration: none;
 }
 .container {
@@ -87,7 +87,7 @@ a {
 }
 .form-container button {
     padding: 0.4rem 1rem;
-    background: #417dff;
+    background: #08a78f;
     color: white;
     border: 1px solid #fff;
     outline: none;
@@ -137,7 +137,7 @@ button.ghost:active {
     z-index: 1;
 }
 .overlay {
-    background: #417dff;
+    background:#08a78f;
     width: 200%;
     height: 100%;
     position: relative;
@@ -192,3 +192,23 @@ button.ghost:active {
     transform: translateX(20%);
     transition: all 0.6s ease-in-out;
 }
+.label img {
+    position: relative;
+    z-index: 9999; 
+    width: 60px;
+    height: 60px;
+    top: 20px;
+    left: 13px;
+}
+.label span {
+    font-family: "宋体", SimSun, sans-serif;
+    font-size: 25px; 
+    font-weight: bold;
+    z-index: 9999;
+    position: relative; 
+    top: 0; 
+    left: 20px; 
+    letter-spacing: 3px;
+    color: #076b5c;
+}
+
