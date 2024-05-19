@@ -3,6 +3,7 @@ from user import User
 from config import config as cfg
 from utils import check_ebike_id, check_charge_time, check_point_id, connect_db
 from appointstate import AppointState
+from charginghistory import ChargingHistory
 
 
 class Charger(User):
@@ -34,6 +35,9 @@ class Charger(User):
 
         # 充电桩预约状态
         self.__appoint_state = AppointState()
+
+        # 充电历史
+        self.__charging_history = ChargingHistory()
 
         # 从数据库中读取该用户已有的信息
         with connect_db() as con:
@@ -183,8 +187,49 @@ class Charger(User):
         :return:
             充电历史 [tuple((point_id, charger_id, start_time, end_time),(),...)]
         """
+        return self.__charging_history.get_charging_history_by_user(self.get_id())
+
+    def cancel_appoint(self):
+        """
+        取消预约
+        :return: 无
+        """
+        if self.__state != 1:
+            raise Exception(f"充电者{self.get_id()}不是已预约状态")
         with connect_db() as con:
             cur = con.cursor()
-            cur.execute("SELECT * FROM charging WHERE charger_id = %s", (self.get_id(),))
-            res = cur.fetchall()
-        return res
+            cur.execute("UPDATE charger SET state = 0 WHERE charger_id = %s", (self.get_id(),))
+            cur.execute("DELETE FROM appoint WHERE charger_id = %s AND state = 1", (self.get_id(),))
+            con.commit()
+        self.__state = 0
+
+
+    def report_repair(self, point_id: str):
+        """
+        充电桩报修
+        :param
+            point_id: 充电桩编号 [str]
+        :return: 无
+        """
+        pass
+
+    def report_ebike_repair(self):
+        """
+        电动车报修
+        :return: 无
+        """
+        pass
+
+    def evaluate_repair(self):
+        """
+        报修服务评价
+        :return: 无
+        """
+        pass
+
+    def get_repair_record(self):
+        """
+        获取自己的维修记录
+        :return: 维修记录 [tuple((repair_id, repair_time, repair_status),(),...)]
+        """
+        pass

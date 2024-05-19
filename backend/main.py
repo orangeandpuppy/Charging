@@ -71,6 +71,7 @@ def create_db(delete=False):
                          "FOREIGN KEY (`charger_id`) REFERENCES user(`id`)"
                          ");")
 
+    con.commit()
     con.close()
     print("数据库创建成功")
 
@@ -80,7 +81,7 @@ if __name__ == '__main__':
     # Test user
     user = User('admin', '123456')
     user.save_to_db()
-    # 因为没有清空数据库，所以会报错，改一下id就行
+    # 因为没有清空数据库，所以会报错，改一下id或者把delete设为True就行
 
     """
     # Test appoint
