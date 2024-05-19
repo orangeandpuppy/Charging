@@ -64,14 +64,26 @@ def create_db(delete=False):
                          "`block`           BOOLEAN NOT NULL"
                          ");")
 
-    # 创建充电者维修记录表，维修记录id为主键，充电者id为外键
+    # 创建维修记录表，维修单编号为主键且自动增长，用户id、维修人员id为外键，维修请求信息、维修记录、维修评价可为空
     con.cursor().execute("CREATE TABLE IF NOT EXISTS charger_repair_id ("
-                         "`repair_id`   INT PRIMARY KEY,"
-                         "`charger_id`  VARCHAR(255) NOT NULL,"
-                         "FOREIGN KEY (`charger_id`) REFERENCES user(`id`)"
+                         "`repair_id`   INT PRIMARY KEY AUTO_INCREMENT,"
+                         "`user_id`     VARCHAR(255) NOT NULL,"
+                         "`engineer_id` VARCHAR(255) NOT NULL,"
+                         "`repair_request`      VARCHAR(500),"
+                         "`repair_log`  VARCHAR(500),"
+                         "`service_evaluate`    VARCHAR(500),"
+                         "FOREIGN KEY (`user_id`, `engineer_id`) REFERENCES user(`id`, `id`)"
                          ");")
 
-    con.commit()
+    # 创建维修者信息和状态表，维修者id为外键，工作状态为0(空闲)1(分配工作中)2(工作中)3(放假中)，地区为F/R/...
+    con.cursor().execute("CREATE TABLE IF NOT EXISTS engineer (" 
+                         "`engineer_id`     VARCHAR(255) PRIMARY KEY,"
+                         "`work_state`      INT NOT NULL DEFAULT 0,"
+                         "`region`          VARCHAR(1) NOT NULL DEFAULT 'F',"
+                        # "`name`            VARCHAR(15) NOT NULL,"
+                         "FOREIGN KEY (`engineer_id`) REFERENCES user(`id`)"
+                         ");")
+
     con.close()
     print("数据库创建成功")
 
@@ -81,7 +93,7 @@ if __name__ == '__main__':
     # Test user
     user = User('admin', '123456')
     user.save_to_db()
-    # 因为没有清空数据库，所以会报错，改一下id或者把delete设为True就行
+    # 因为没有清空数据库，所以会报错，改一下id就行
 
     """
     # Test appoint
