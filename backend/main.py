@@ -83,7 +83,7 @@ def create_db(delete=False):
                         # "`name`            VARCHAR(15) NOT NULL,"
                          "FOREIGN KEY (`engineer_id`) REFERENCES user(`id`)"
                          ");")
-
+    con.commit()
     con.close()
     print("数据库创建成功")
 
