@@ -9,7 +9,7 @@ config = {
     'host': '115.236.153.172',
     'user': "remote_connect",
     'password': "123456",
-    'port': 26505,
+    'port': 22434,  # 26505
     'database': 'charging_db',
     'charset': 'utf8',
 
