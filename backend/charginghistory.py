@@ -2,7 +2,6 @@
 充电历史查询类
 
 """
-import duckdb
 from utils import connect_db
 
 

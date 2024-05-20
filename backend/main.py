@@ -72,7 +72,8 @@ def create_db(delete=False):
                          "`repair_request`      VARCHAR(500),"
                          "`repair_log`  VARCHAR(500),"
                          "`service_evaluate`    VARCHAR(500),"
-                         "FOREIGN KEY (`user_id`, `engineer_id`) REFERENCES user(`id`, `id`)"
+                         "FOREIGN KEY (`user_id`) REFERENCES user(`id`),"
+                         "FOREIGN KEY (`engineer_id`) REFERENCES user(`id`)"
                          ");")
 
     # 创建维修者信息和状态表，维修者id为外键，工作状态为0(空闲)1(分配工作中)2(工作中)3(放假中)，地区为F/R/...
