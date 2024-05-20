@@ -7,9 +7,9 @@ from charginghistory import ChargingHistory
 
 
 class Charger(User):
-    def __init__(self, id: str, password: str):
+    def __init__(self, id: str, password: str, role: str = 'charger'):
         # 电动车编号、学号、密码等个人信息
-        super().__init__(id, password)
+        super().__init__(id, password, role)
         # 使用充电服务前必须注册,init则代表登陆
         if not self.is_in_db():
             raise Exception(f"充电者{self.get_id()}未注册")

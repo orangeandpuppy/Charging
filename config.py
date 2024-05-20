@@ -19,6 +19,7 @@ config = {
     # 电动车充电
     'supported_charging_station': ['G', 'X', 'F'],  # 支持的充电站
     'supported_charging_point_color': ['R', 'B'],  # 支持的充电口颜色
+    'supported_role': ['charger', 'admin', 'engineer'],  # 支持的用户角色
     'charging_station_point_num': {'G': 30, 'X': 30, 'F': 30},  # 充电站内每种颜色的充电桩数量，编号从1开始
 
     # 支持的密码字符（为了防止加入数据库时有转义符）

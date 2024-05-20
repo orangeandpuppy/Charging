@@ -7,11 +7,14 @@ from utils import connect_db
 
 
 class User:
-    def __init__(self, id: str, password: str):
+    def __init__(self, id: str, password: str, role: str = 'charger'):
         self.__id = id
         if not self.__check_password(password):
             raise Exception("密码不合法")
         self.__password = password
+        self.__role = role
+        if role not in cfg['supported_role']:
+            raise Exception(f"不支持的用户角色{role}")
 
     def get_id(self):
         """

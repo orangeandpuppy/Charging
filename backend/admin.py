@@ -7,8 +7,8 @@ from charginghistory import ChargingHistory
 from charger import Charger
 
 class Admin:
-    def __init__(self, admin_id: str, password: str):
-        super().__init__(admin_id, password)
+    def __init__(self, admin_id: str, password: str, role: str = 'admin'):
+        super().__init__(admin_id, password, role)
         if not self.is_in_db():
             raise Exception(f"管理员{self.get_id()}未注册")
         self.__role = 'admin'
