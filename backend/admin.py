@@ -6,9 +6,10 @@ from appointstate import AppointState
 from charginghistory import ChargingHistory
 from charger import Charger
 from repaircontrol import RepairControl
-class Admin(User):
-    def __init__(self, id: str, password: str):
-        super().__init__(id, password)
+
+class Admin:
+    def __init__(self, admin_id: str, password: str,role:str='admin'):
+        super().__init__(admin_id, password, role)
         if not self.is_in_db():
             raise Exception(f"管理员{self.get_id()}未注册")
         self.__role = 'admin'
@@ -33,6 +34,7 @@ class Admin(User):
         """
         return self.__charging_history.get_charging_history_by_charger(point_id)
     
+
     def get_point_appoint_state(self, point_id: str, start_time: datetime, end_time: datetime):
         """
         查询指定充电桩从start_time到end_time的预约状态
@@ -44,6 +46,7 @@ class Admin(User):
             预约状态 [int]
         """
         return self.__appoint_state.get_point_appoint_state(point_id, start_time, end_time)
+
 
     def lock_and_report_charger(self, point_id):
         """将指定充电桩锁定，报修并通知预约该充电桩的学生"""
@@ -115,14 +118,7 @@ class Admin(User):
         password=self._find_charger_password(charger_id)
         charger = Charger(charger_id,password)
         #解锁学生账号
-        charger._block=True
-        #将学生失信次数清零
-        charger.__dishonesty_time=0
-        #更新数据库
-        with connect_db() as con:
-            cur = con.cursor()
-            cur.execute("UPDATE charger SET  dishonesty_time = %s, block = %s WHERE charger_id = %s", (charger_id))
-            con.commit()
+        charger.unlock()
     
 
     def report_issue(self, issue_description: str):
@@ -141,7 +137,7 @@ class Admin(User):
         """报修服务评价"""
         self.__repair_control.request_evaluate(repair_id, comments)
 
-    def register_new_account(self):
+    def register_new_account(self,user_id:str):
         # 注册审核新账户
         pass
 

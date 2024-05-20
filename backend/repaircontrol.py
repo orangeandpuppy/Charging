@@ -7,18 +7,31 @@ class RepairControl:
     """
     静态方法类，通过类名直接调用
     """
-    repair_request_process_list = {i:[] for i in CHARGER_LIST}   # 每个地区中正在进行的维修列表
-    repair_request_wait_queue = {i:queue.Queue() for i in CHARGER_LIST}
+    repair_request_wait_queue = {i: queue.Queue() for i in CHARGER_LIST} # 每个地区中等待进行的维修列表
     region_engineer = count_engineer()
 
     @staticmethod
-    def position_classify(position: str):
+    def __position_classify(position: str):
         """
         根据地址划分片区，暂时默认前端已经处理成对应片区的编号
         :param position: 用户所在地址
         :return: 片区编号
         """
         return position
+
+    @staticmethod
+    def change_state_engineer(engineer_id: str, region: str, state: int):
+        """
+        维修人员改变工作状态
+        :param engineer_id: 维修人员id
+        :param region: 维修人员所属片区编号
+        :param state: 维修人员要改变成的状态
+        :return: none
+        """
+        for (index,engineer) in enumerate(RepairControl.region_engineer[region]):
+            if engineer[0] == engineer_id:    # 找到该维修人员
+                RepairControl.region_engineer[region][index][1] = state
+
 
     @staticmethod
     def repair_request(user_id: str, position_api: str, request_info: str):
@@ -29,7 +42,7 @@ class RepairControl:
         :param request_info: 维修信息
         :return: none
         """
-        region = RepairControl.position_classify(position_api)
+        region = RepairControl.__position_classify(position_api)
         new_repair_request = RepairRequest(user_id, region, request_info)
         new_repair_request.distribute_engineer()
         found = False
