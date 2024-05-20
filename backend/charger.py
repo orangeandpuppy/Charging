@@ -203,6 +203,20 @@ class Charger(User):
             con.commit()
         self.__state = 0
 
+    # 解锁账号
+    def unlock(self):
+        """
+        解锁账号
+        :return: 无
+        """
+        if not self.__block:
+            raise Exception(f"充电者{self.get_id()}未被封禁")
+        self.__block = False
+        self.__dishonesty_time = 0
+        with connect_db() as con:
+            cur = con.cursor()
+            cur.execute("UPDATE charger SET block = %s, dishonesty_time = %s WHERE charger_id = %s", (self.__block, self.__dishonesty_time, self.get_id()))
+            con.commit()
 
     def report_repair(self, point_id: str):
         """
