@@ -72,7 +72,7 @@ def create_db(delete=False):
                          "`repair_request`      VARCHAR(500),"
                          "`repair_log`  VARCHAR(500),"
                          "`service_evaluate`    VARCHAR(500),"
-                         "FOREIGN KEY (`user_id`, `engineer_id`) REFERENCES user(`id`, `id`)"
+                         "FOREIGN KEY (`user_id`,`engineer_id`) REFERENCES user(`id`, `id`)"
                          ");")
 
     # 创建维修者信息和状态表，维修者id为外键，工作状态为0(空闲)1(分配工作中)2(工作中)3(放假中)，地区为F/R/...
@@ -91,7 +91,7 @@ def create_db(delete=False):
 if __name__ == '__main__':
     create_db(delete=True)
     # Test user
-    user = User('admin', '123456')
+    user = User('adm', '123678')
     user.save_to_db()
     # 因为没有清空数据库，所以会报错，改一下id就行
 
@@ -105,6 +105,6 @@ if __name__ == '__main__':
     print(a)
     """
 
-    # Test charger
-    charger = Charger('admin', '123456')
-    charger.add_electric_vehicle('G1234')
+    # # Test charger
+    # charger = Charger('admin', '123456')
+    # charger.add_electric_vehicle('G1234')
