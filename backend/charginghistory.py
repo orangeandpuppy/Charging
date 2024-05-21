@@ -6,35 +6,35 @@ from utils import connect_db
 
 
 class ChargingHistory:
-    def get_charging_history_by_user(self, user_id):
+    def get_charging_history_by_user(self, charger_id):
         """
         根据用户ID查询充电历史记录
         :param
-            user_id: 用户ID
+            charger_id: 充电人员ID
         ：return: 
             充电历史记录[tuple((point_id, charger_id, start_time, end_time),(),...)]    
         
-        """
-        query = '''SELECT * FROM ChargingHistory WHERE user_id = ?;'''
-        with connect_db() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query, (user_id,))
-            records = cursor.fetchall()
-        return records
-     
-    def get_charging_history_by_charger(self, charger_id):
-        """
-        根据充电桩ID查询充电历史记录
-        ：param
-            charger_id: 充电桩ID
-        ：return: 
-            充电历史记录[tuple((point_id, charger_id, start_time, end_time),(),...)]
-
         """
         query = '''SELECT * FROM charging WHERE charger_id = ?;'''
         with connect_db() as conn:
             cursor = conn.cursor()
             cursor.execute(query, (charger_id,))
+            records = cursor.fetchall()
+        return records
+     
+    def get_charging_history_by_charger(self, point_id):
+        """
+        根据充电桩ID查询充电历史记录
+        ：param
+            point_id: 充电桩ID
+        ：return: 
+            充电历史记录[tuple((point_id, charger_id, start_time, end_time),(),...)]
+
+        """
+        query = '''SELECT * FROM charging WHERE point_id = ?;'''
+        with connect_db() as conn:
+            cursor = conn.cursor()
+            cursor.execute(query, (point_id,))
             records = cursor.fetchall()
         return records    
     

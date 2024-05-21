@@ -92,7 +92,7 @@ def create_db(delete=False):
 if __name__ == '__main__':
     create_db(delete=True)
     # Test user
-    user = User('admin', '123456')
+    user = User('adm', '123678')
     user.save_to_db()
     # 因为没有清空数据库，所以会报错，改一下id就行
 
@@ -106,6 +106,6 @@ if __name__ == '__main__':
     print(a)
     """
 
-    # Test charger
-    charger = Charger('admin', '123456')
-    charger.add_electric_vehicle('G1234')
+    # # Test charger
+    # charger = Charger('admin', '123456')
+    # charger.add_electric_vehicle('G1234')
