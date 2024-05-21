@@ -5,8 +5,8 @@ from utils import connect_db
 
 class Engineer(User):
 
-    def __init__(self, engineer_id: str, password: str):
-        super().__init__(engineer_id, password)
+    def __init__(self, engineer_id: str, password: str, role: str = 'engineer'):
+        super().__init__(engineer_id, password, role)
         if not self.is_in_db():
             raise Exception(f"维修人员{self.get_id()}未注册")
         self.__role = 'engineer'
