@@ -4,12 +4,13 @@ from config import config as cfg
 from utils import check_ebike_id, check_charge_time, check_point_id, connect_db
 from appointstate import AppointState
 from charginghistory import ChargingHistory
+from repaircontrol import RepairControl
 
 
 class Charger(User):
-    def __init__(self, id: str, password: str):
+    def __init__(self, charger_id: str, password: str, role: str = 'charger'):
         # 电动车编号、学号、密码等个人信息
-        super().__init__(id, password)
+        super().__init__(charger_id, password, role)
         # 使用充电服务前必须注册,init则代表登陆
         if not self.is_in_db():
             raise Exception(f"充电者{self.get_id()}未注册")
@@ -38,6 +39,9 @@ class Charger(User):
 
         # 充电历史
         self.__charging_history = ChargingHistory()
+
+        # 维修服务
+        self.__repair_control = RepairControl()
 
         # 从数据库中读取该用户已有的信息
         with connect_db() as con:
@@ -203,33 +207,43 @@ class Charger(User):
             con.commit()
         self.__state = 0
 
-
-    def report_repair(self, point_id: str):
+    # 解锁账号
+    def unlock(self):
         """
-        充电桩报修
+        解锁账号
+        :return: 无
+        """
+        if not self.__block:
+            raise Exception(f"充电者{self.get_id()}未被封禁")
+        self.__block = False
+        self.__dishonesty_time = 0
+        with connect_db() as con:
+            cur = con.cursor()
+            cur.execute("UPDATE charger SET block = %s, dishonesty_time = %s WHERE charger_id = %s", (self.__block, self.__dishonesty_time, self.get_id()))
+            con.commit()
+
+    def report_issue(self, position_api: str, request_info: str):
+        """
+        充电桩/电动车报修
         :param
-            point_id: 充电桩编号 [str]
+            issue_description: 报修描述 [str]
         :return: 无
         """
-        pass
+        self.__repair_control.repair_request(self.get_id(), position_api, request_info)
 
-    def report_ebike_repair(self):
-        """
-        电动车报修
-        :return: 无
-        """
-        pass
-
-    def evaluate_repair(self):
+    def evaluate_repair_service(self, repair_id: int, comments: str):
         """
         报修服务评价
+        :param
+            repair_id: 维修单id [int]
+            comments: 评价内容 [str]
         :return: 无
         """
-        pass
+        self.__repair_control.request_evaluate(repair_id, comments)
 
-    def get_repair_record(self):
+    def get_own_repair_record(self):
         """
         获取自己的维修记录
-        :return: 维修记录 [tuple((repair_id, repair_time, repair_status),(),...)]
+        :return: 维修记录 [tuple((维修单编号, 维修请求信息, 维修人员的维修记录, 用户自己的评价),(),...)]
         """
-        pass
+        return self.__repair_control.user_get_repair(self.get_id())
