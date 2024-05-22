@@ -2,6 +2,7 @@ from user import User
 from repaircontrol import RepairControl
 from utils import connect_db
 from main import create_db
+import random
 
 
 class Engineer(User):
@@ -28,9 +29,6 @@ class Engineer(User):
             cur = con.cursor()
             cur.execute("SELECT region, work_state FROM engineer "
                         "WHERE engineer_id = %s", self._User__id)
-            data = cur.fetchall()
-            print("get:")
-            print(data)
             data = cur.fetchall()[0]
         return data[0], data[1]
 
@@ -44,11 +42,7 @@ class Engineer(User):
             cur.execute("SELECT work_state FROM engineer "
                         "WHERE engineer_id = %s", self._User__id)
             data = cur.fetchall()
-            print(data)
-            cur.execute("SELECT * FROM engineer ")
-            data = cur.fetchall()
-            print(data)
-            self.__state = data
+            self.__state = data[0][0]
 
     def save_to_db(self, region):
         """
@@ -62,8 +56,13 @@ class Engineer(User):
             cur.execute("INSERT INTO user VALUES (%s, %s)", (self._User__id, self._User__password))
             con.commit()
             cur.execute("INSERT INTO engineer(`engineer_id`, `region`) VALUES (%s, %s)", (self._User__id, region))
+            con.commit()
 
     def get_region(self):
+        """
+        获取该维修人员所属片区
+        :return: 片区编号
+        """
         return self.__region
 
     def get_state(self):
@@ -120,9 +119,8 @@ if __name__ == '__main__':
 
     create_db(delete=True)
 
-    user = User('admin', '123456')
+    user = User('user1', '123456')
     user.save_to_db()
-    RepairControl.repair_request(user.get_id(), 'G', '车坏了修一下')
 
     while True:
         print("1. 登录\n2. 注册")
@@ -149,12 +147,8 @@ if __name__ == '__main__':
         if not e1.is_in_db():
             e1.save_to_db()
 
-        with connect_db() as con:
-            cur = con.cursor()
-            cur.execute("SELECT * FROM user WHERE id = %s", id_login)
-            data = cur.fetchone()
-            print("user:",end=' ')
-            print(data)
+        RepairControl.repair_request(user.get_id(), 'G', '车坏了修一下' + str(random.random()))   # 模拟用户报修
+
         while True:
             e1.refresh()
             state, state_name = e1.get_state()
@@ -167,7 +161,8 @@ if __name__ == '__main__':
             else:
                 print("1. 开始工作")
             print("2. 查看历史维修信息")
-            print("3. 退出登录")
+            print("3. 刷新状态")
+            print("4. 退出登录")
 
             choice = int(input())
 
@@ -187,10 +182,13 @@ if __name__ == '__main__':
                             e1.accept_repair_request()
                             print("已接受")
                         else:
-                            print("维修日志:")
+                            print("维修日志:", end='')
                             log = input()
                             e1.complete_repair_request(log)
                             print("完成维修")
+
+                            rid = RepairControl.user_get_repair(user.get_id())[0][0]  # 模拟用户评价
+                            RepairControl.request_evaluate(rid, '非常好维修')
 
             elif choice == 2:
                 rlist = e1.get_repair_list()
@@ -198,5 +196,5 @@ if __name__ == '__main__':
                 print("任意键返回上一级")
                 input()
 
-            else:
+            elif choice == 4:
                 break

@@ -54,7 +54,7 @@ class RepairRequest:
         self.__repair_log = log
         with connect_db() as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO charger_repair_id VALUES (NULL, '%s', '%s', '%s', '%s', '%s')",
+            cur.execute("INSERT INTO charger_repair_id VALUES (NULL, %s, %s, %s, %s, %s)",
                         (self.__user_id, self.__engineer_id, self.__repair_request, self.__repair_log,
                          self.__service_evaluate))
             con.commit()

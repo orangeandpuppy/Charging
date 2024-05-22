@@ -35,7 +35,7 @@ class RepairControl:
                 with connect_db() as con:
                     cur = con.cursor()
                     cur.execute("UPDATE engineer SET work_state = %s WHERE engineer_id = %s",
-                                (state, engineer_id))
+                                (str(state), engineer_id))
                     con.commit()
 
 
@@ -106,8 +106,7 @@ class RepairControl:
                 RepairControl.region_engineer[region][index][2].request_complete(log)
                 RepairControl.region_engineer[region][index][1] = 0
                 RepairControl.change_state_engineer(engineer[0], region, 0)
-                RepairControl.region_engineer[region][index].get()
-
+                RepairControl.region_engineer[region][index].pop()
                 if not RepairControl.repair_request_wait_queue[region].empty():     # 还有任务需要分配
                     new_repair_request = RepairControl.repair_request_wait_queue[region].get()
                     new_repair_request.distribute_engineer(engineer[0])     # 分配给该维修人员
@@ -125,8 +124,8 @@ class RepairControl:
             RepairControl.region_engineer[region][-1][1] = 1
             RepairControl.region_engineer[region][-1][2].request_accept()
             RepairControl.change_state_engineer(engineer_id, region, 1)
-        print(RepairControl.region_engineer)
-        print(RepairControl.repair_request_wait_queue)
+        # print(RepairControl.region_engineer)
+        # print(RepairControl.repair_request_wait_queue)
 
     @staticmethod
     def request_evaluate(repair_id: int, comment: str):
@@ -138,8 +137,8 @@ class RepairControl:
         """
         with connect_db() as con:
             cur = con.cursor()
-            cur.execute("UPDATE charger_repair_id SET service_evaluate = '%s' WHERE repair_id = %d",
-                        (comment, repair_id))
+            cur.execute("UPDATE charger_repair_id SET service_evaluate = %s WHERE repair_id = %s",
+                        (comment, str(repair_id)))
             con.commit()
 
     @staticmethod
