@@ -7,7 +7,7 @@ class RepairRequest:
         特定维修申请的类
         :param user_id: 用户的维修id
         :param position: 维修地址
-        :param request: 维修请求信息
+        :param request: 报修信息
         """
         self.__user_id = user_id
         self.__region = position
@@ -16,9 +16,16 @@ class RepairRequest:
         self.__repair_log = ''
         self.__service_evaluate = ''
 
+    def get_request(self):
+        """
+        获取报修信息
+        :return: 
+        """
+        return self.__repair_request
+
     def distribute_engineer(self, engineer_id:str):
         """
-        把维修请求单分配给维修人员，状态改变为1(分配工作中)
+        把报修单分配给维修人员，状态改变为1(分配工作中)
         :param engineer_id: 维修人员id
         :return: none
         """

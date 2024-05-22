@@ -10,6 +10,7 @@ class RepairControl:
     repair_request_wait_queue = {i: queue.Queue() for i in CHARGER_LIST} # 每个地区中等待进行的维修列表
     region_engineer = count_engineer()
 
+
     @staticmethod
     def __position_classify(position: str):
         """
@@ -22,7 +23,7 @@ class RepairControl:
     @staticmethod
     def change_state_engineer(engineer_id: str, region: str, state: int):
         """
-        维修人员改变工作状态
+        在程序和数据库中为维修人员改变工作状态
         :param engineer_id: 维修人员id
         :param region: 维修人员所属片区编号
         :param state: 维修人员要改变成的状态
@@ -31,6 +32,11 @@ class RepairControl:
         for (index,engineer) in enumerate(RepairControl.region_engineer[region]):
             if engineer[0] == engineer_id:    # 找到该维修人员
                 RepairControl.region_engineer[region][index][1] = state
+                with connect_db() as con:
+                    cur = con.cursor()
+                    cur.execute("UPDATE engineer SET work_state = %s WHERE engineer_id = %s",
+                                (state, engineer_id))
+                    con.commit()
 
 
     @staticmethod
@@ -44,17 +50,33 @@ class RepairControl:
         """
         region = RepairControl.__position_classify(position_api)
         new_repair_request = RepairRequest(user_id, region, request_info)
-        new_repair_request.distribute_engineer()
         found = False
         for (index,engineer) in enumerate(RepairControl.region_engineer[region]):
             if engineer[1] == 0:    # 找到该片区第一个空闲的人，分配任务
                 new_repair_request.distribute_engineer(engineer[0])     # 分配
                 RepairControl.region_engineer[region][index].append(new_repair_request)
                 RepairControl.region_engineer[region][index][1] = 1
+                RepairControl.change_state_engineer(engineer[0], region, 1)
                 found = True
 
         if not found:   # 暂无空闲维修人员，加入等待列表
             RepairControl.repair_request_wait_queue[region].put(new_repair_request)
+
+    @staticmethod
+    def current_request(engineer_id: str, region: str):
+        """
+        维修人员查看正在分配的任务
+        :param engineer_id: 维修人员id
+        :param region: 维修人员所属片区编号
+        :return: 维修人员当前任务
+        """
+        for (index,engineer) in enumerate(RepairControl.region_engineer[region]):
+            if engineer[0] == engineer_id:    # 找到该维修人员
+                if engineer[1] == 1 or engineer[1] == 2:
+                    return engineer[2]
+                else:
+                    return 0
+        return 0
 
     @staticmethod
     def request_accept(engineer_id: str, region: str):
@@ -68,6 +90,7 @@ class RepairControl:
             if engineer[0] == engineer_id:    # 找到该维修人员
                 RepairControl.region_engineer[region][index][2].request_accept()
                 RepairControl.region_engineer[region][index][1] = 2
+                RepairControl.change_state_engineer(engineer[0], region, 2)
 
     @staticmethod
     def request_complete(engineer_id: str, log: str, region: str):
@@ -82,12 +105,28 @@ class RepairControl:
             if engineer[0] == engineer_id:    # 找到该维修人员，状态改为空闲，弹出任务
                 RepairControl.region_engineer[region][index][2].request_complete(log)
                 RepairControl.region_engineer[region][index][1] = 0
-                RepairControl.region_engineer[region][index].pop()
+                RepairControl.change_state_engineer(engineer[0], region, 0)
+                RepairControl.region_engineer[region][index].get()
+
                 if not RepairControl.repair_request_wait_queue[region].empty():     # 还有任务需要分配
-                    new_repair_request = RepairControl.repair_request_wait_queue[region].pop()
+                    new_repair_request = RepairControl.repair_request_wait_queue[region].get()
                     new_repair_request.distribute_engineer(engineer[0])     # 分配给该维修人员
                     RepairControl.region_engineer[region][index].append(new_repair_request)
                     RepairControl.region_engineer[region][index][1] = 1
+                    RepairControl.change_state_engineer(engineer[0], region, 1)
+
+    @staticmethod
+    def change_for_new_engineer(engineer_id: str, region: str):
+        RepairControl.region_engineer[region].append([engineer_id, 0])  # 新增维修人员
+        if not RepairControl.repair_request_wait_queue[region].empty():     # 还有任务需要分配
+            new_repair_request = RepairControl.repair_request_wait_queue[region].get()
+            new_repair_request.distribute_engineer(engineer_id)     # 分配给该维修人员
+            RepairControl.region_engineer[region][-1].append(new_repair_request)
+            RepairControl.region_engineer[region][-1][1] = 1
+            RepairControl.region_engineer[region][-1][2].request_accept()
+            RepairControl.change_state_engineer(engineer_id, region, 1)
+        print(RepairControl.region_engineer)
+        print(RepairControl.repair_request_wait_queue)
 
     @staticmethod
     def request_evaluate(repair_id: int, comment: str):
@@ -133,4 +172,4 @@ class RepairControl:
 
 
 if __name__ == '__main__':
-    print("test RepairControl")
+    pass
